@@ -40,7 +40,7 @@ BOOL Sandbox::set_token_integrity_level(HANDLE *token,
            GetLastError());
     return FALSE;
   }
-  LocalFree(psd);
+  free(psd);
 
   return TRUE;
 }

@@ -17,7 +17,7 @@ BOOL RendererProcess::set_mitigation_policies() {
              GetLastError());
     }
     // Ignoring Access denied
-    if (GetLastError() == 5) {
+    if (GetLastError() == ERROR_ACCESS_DENIED) {
       success = TRUE;
     }
   }

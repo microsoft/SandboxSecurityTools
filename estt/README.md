@@ -10,7 +10,9 @@ cmake --build . --config Release
 ```
 
 ## How to Run?
-`.\build\estt.exe .\build\custom.exe`
+`.\Release\estt.exe .\Release\renderer.exe`
 
 ## How To write your code in this project?
 Make updates to the function `custom` at `child/renderer/renderer.cc`. The code will run with similar privileges and tokens as Edge (Chromium based) Renderer Process.
+
+_Note: Using any other executable is not supported and it may not create the sandbox properly_
