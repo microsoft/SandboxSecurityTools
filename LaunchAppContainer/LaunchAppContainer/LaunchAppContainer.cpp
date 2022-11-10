@@ -20,7 +20,7 @@ bool LaunchAsLpac = false;
 void PrintUsage()
 {
     wprintf(L"LaunchAppContainer.exe Usage:\r\n");
-    wprintf(L"\t-m Moniker -c Capability1;Capability2;CapabilityN -w -r -l -i ExeToLaunch [exe args]\r\n");
+    wprintf(L"\t-m Moniker -i ExeToLaunch -c Capability1;Capability2;CapabilityN -w -r -l\r\n");
     wprintf(L"\r\n");
     wprintf(L"Required Arguments:\r\n");
     wprintf(L"\t-i : Path of the exe to launch\r\n");
@@ -32,7 +32,7 @@ void PrintUsage()
 
     wprintf(L"\t-w : Wait for AppContainer process to exit\r\n");
     wprintf(L"\t-r : Retain AppContainer profile after process exit\r\n");
-    wprintf(L"\t-l : Create process as low-priviledge AppContainer (LPAC)\r\n");
+    wprintf(L"\t-l : Create process as less-priviledge AppContainer (LPAC)\r\n");
 }
 
 bool ParseCapabilityList(WCHAR* psCapabilities)
@@ -330,6 +330,8 @@ int wmain(int argc, WCHAR** argv)
     // At a minimum we need the moniker and exe path.
     if (PackageMoniker.size() == 0 || ExeToLaunch == nullptr)
     {
+        PrintUsage();
+        wprintf(L"\r\n");
         wprintf(L"Package moniker and exe path are required to start an AppContainer process\r\n");
         return 0;
     }
