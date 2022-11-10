@@ -1,14 +1,14 @@
-# Project
+# SandboxSecurityTools
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repository contains tools that can be used to help test security vulnerabilities against the sandboxes supported by the [Microsoft Windows Insider Preview Bounty Program](https://www.microsoft.com/en-us/msrc/bounty-windows-insider-preview?rtc=1) in the local attack scenario category. The following list describes each tool and what sandboxes they can be used to test. For additional information such as how to compile and run each tool please see the README.md file contained in the tool's directory.
 
-As the maintainer of this project, please make a few updates:
+- Edge Sandbox Test Tool   
+The Edge Sandbox Testing Tool can be used to test code running inside the Chromium renderer process sandbox.   
+**Supported sandboxes:** Edge renderer process
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+- Launch App Container   
+The LaunchAppContainer tool can be used to run applications in AppContainer or Less Privileged AppContainer (LPAC) sandboxes.   
+**Supported sandboxes:** AppContainer and Less-Privileged AppContainer (LPAC)
 
 ## Contributing
 
