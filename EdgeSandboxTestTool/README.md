@@ -10,7 +10,7 @@ cmake ..\src
 cmake --build . --config Release
 ```
 
-This project produces two executables: estt.exe and renderer.exe. The renderer.exe application is the sandbox process that mimicks the restricted environment of the Chromium renderer process. The estt.exe application is used to start the renderer.exe sandbox process.
+This project produces two executables: estt.exe and renderer.exe. The renderer.exe application is the sandbox process that mimics the restricted environment of the Chromium renderer process. The estt.exe application is used to start the renderer.exe sandbox process.
 
 ## How to Run
 `.\Release\estt.exe .\Release\renderer.exe`
