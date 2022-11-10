@@ -32,7 +32,7 @@ void PrintUsage()
 
     wprintf(L"\t-w : Wait for AppContainer process to exit\r\n");
     wprintf(L"\t-r : Retain AppContainer profile after process exit\r\n");
-    wprintf(L"\t-l : Create process as less-priviledge AppContainer (LPAC)\r\n");
+    wprintf(L"\t-l : Create process as less-privileged AppContainer (LPAC)\r\n");
 }
 
 bool ParseCapabilityList(WCHAR* psCapabilities)
