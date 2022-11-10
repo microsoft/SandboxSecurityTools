@@ -15,7 +15,7 @@ Optional Arguments:
         -d : Display name for the app container profile
         -w : Wait for AppContainer process to exit
         -r : Retain AppContainer profile after process exit
-        -l : Create process as less-priviledge AppContainer (LPAC)
+        -l : Create process as less-privileged AppContainer (LPAC)
 ```
 
 ### Moniker
