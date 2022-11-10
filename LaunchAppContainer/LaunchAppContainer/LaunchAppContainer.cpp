@@ -1,5 +1,5 @@
-// LaunchAppContainer.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License. See License.md in the project root for license information.
 
 #include <Windows.h>
 #include <UserEnv.h>

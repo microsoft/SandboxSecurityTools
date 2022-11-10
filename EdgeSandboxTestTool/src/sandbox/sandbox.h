@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License. See License.md in the project root for license information.
+
 #pragma comment(lib, "advapi32.lib")
 
 #include <vector>
