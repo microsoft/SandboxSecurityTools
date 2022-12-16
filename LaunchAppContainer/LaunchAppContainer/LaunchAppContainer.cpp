@@ -148,7 +148,7 @@ DWORD CreateAppContainerProfileWithMoniker(PSID* pAppContainerSid)
                                            pDisplayString, 
                                            pDisplayString, 
                                            CapabilityList.data(), 
-                                           CapabilityList.size(), 
+                                           static_cast<DWORD>(CapabilityList.size()), 
                                            &PackageSid);
     if (FAILED(hr))
     {
@@ -235,7 +235,7 @@ DWORD LaunchProcess(PSID PackageSid)
     }
 
     // Setup the app container capabilities attribute.
-    SecurityCapabilities.CapabilityCount = CapabilityList.size();
+    SecurityCapabilities.CapabilityCount = static_cast<DWORD>(CapabilityList.size());
     SecurityCapabilities.Capabilities = CapabilityList.data();
     SecurityCapabilities.AppContainerSid = PackageSid;
     SecurityCapabilities.Reserved = 0;
