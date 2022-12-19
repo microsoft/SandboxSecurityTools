@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#pragma comment(lib, "onecoreuap.lib") // for DeriveCapabilitySidsFromName
 
 // Parsed command line arguments:
 WCHAR* ExeToLaunch = nullptr;
@@ -35,6 +36,18 @@ void PrintUsage()
     wprintf(L"\t-l : Create process as less-privileged AppContainer (LPAC)\r\n");
 }
 
+
+void FreeSidArray(PSID* sids, ULONG count)
+{
+    for (ULONG i = 0; i < count; i++) {
+        LocalFree(sids[i]);
+        sids[i] = nullptr;
+    }
+
+    LocalFree(sids);
+    sids = nullptr;
+}
+
 bool ParseCapabilityList(WCHAR* psCapabilities)
 {
     WCHAR* psNextToken = nullptr;
@@ -43,16 +56,43 @@ bool ParseCapabilityList(WCHAR* psCapabilities)
     WCHAR* psCap = wcstok_s(psCapabilities, L";", &psNextToken);
     while (psCap != nullptr)
     {
-        SID_AND_ATTRIBUTES SidInfo = { 0 };
-        SidInfo.Attributes = SE_GROUP_ENABLED;
+        {
+            SID_AND_ATTRIBUTES SidInfo = { 0 };
+            SidInfo.Attributes = SE_GROUP_ENABLED;
+            if (ConvertStringSidToSid(psCap, &SidInfo.Sid))
+            {
+                CapabilityList.push_back(SidInfo);
 
-        if (ConvertStringSidToSid(psCap, &SidInfo.Sid) == FALSE)
+                psCap = nullptr; // signal that capability have been parsed
+            }
+        }
+
+        if (psCap)
+        {
+            PSID * cap_group_sids = nullptr;
+            DWORD cap_group_sids_len = 0;
+            PSID * cap_sids = nullptr;
+            DWORD cap_sids_len = 0;
+            if (DeriveCapabilitySidsFromName(psCap, &cap_group_sids, &cap_group_sids_len, &cap_sids, &cap_sids_len))
+            {
+                // use capability SIDs
+                for (size_t i = 0; i < cap_sids_len; ++i)
+                    CapabilityList.push_back({cap_sids[i], SE_GROUP_ENABLED});
+
+                // clean up cap_group_sids
+                FreeSidArray(cap_group_sids, cap_group_sids_len);
+                // clean up cap_sids object, but not entries who are needed when using CapabilityList later
+                LocalFree(cap_sids);
+
+                psCap = nullptr; // signal that capability have been parsed
+            }
+        }
+
+        if (psCap)
         {
             wprintf(L"Error parsing capability list\r\n");
             return false;
         }
-
-        CapabilityList.push_back(SidInfo);
 
         psCap = wcstok_s(psNextToken, L";", &psNextToken);
     }
