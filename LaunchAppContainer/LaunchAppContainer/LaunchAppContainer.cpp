@@ -9,11 +9,31 @@
 #include <string>
 #pragma comment(lib, "onecoreuap.lib") // for DeriveCapabilitySidsFromName
 
+/** RAII wrapper of SID_AND_ATTRIBUTES that adds a destructor to avoid memory leaks. */
+struct SidAttrWrap : public SID_AND_ATTRIBUTES {
+    SidAttrWrap(SID_AND_ATTRIBUTES obj) : SID_AND_ATTRIBUTES(obj) {
+    }
+
+    SidAttrWrap(SidAttrWrap&& obj) {
+        Sid = 0;
+        Attributes = 0;
+        std::swap(obj.Sid, Sid);
+        std::swap(obj.Attributes, Attributes);
+    }
+
+    ~SidAttrWrap() {
+        if (Sid) {
+            LocalFree(Sid);
+            Sid = nullptr;
+        }
+    }
+};
+
 // Parsed command line arguments:
 WCHAR* ExeToLaunch = nullptr;
 std::wstring PackageMoniker;
 std::wstring PackageDisplayName;
-std::vector<SID_AND_ATTRIBUTES> CapabilityList;
+std::vector<SidAttrWrap> CapabilityList;
 bool WaitForExit = false;
 bool RetainProfile = false;
 bool LaunchAsLpac = false;
@@ -77,7 +97,7 @@ bool ParseCapabilityList(WCHAR* psCapabilities)
             {
                 // use capability SIDs
                 for (size_t i = 0; i < cap_sids_len; ++i)
-                    CapabilityList.push_back({cap_sids[i], SE_GROUP_ENABLED});
+                    CapabilityList.push_back(SID_AND_ATTRIBUTES{cap_sids[i], SE_GROUP_ENABLED});
 
                 // clean up cap_group_sids
                 FreeSidArray(cap_group_sids, cap_group_sids_len);
