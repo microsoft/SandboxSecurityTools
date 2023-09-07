@@ -30,4 +30,4 @@ AppContainer and LPAC sandboxes are granted access to various system resources t
 LaunchAppContainer.exe -m 1.0.0.0_x86_en-us_TestProgram_wvx3sa3v3dj1m -c S-1-15-3-1024-2405443489-874036122-4286035555-1823921565-1746547431-2453885448-3625952902-991631256;S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681 -w -l -i cmd.exe
 ```
 
-The 'LaunchSandboxMSRC.bat' file has been included to help security researchers test submissions for the MSRC bounty program. It contains a predefined list of capabilities that are eligable for the sandbox escape bounty award, capabilities not included in that list are not eligable for bounty submissions.
+The 'LaunchSandboxMSRC.bat' file has been included to help security researchers test submissions for the MSRC bounty program. It contains a predefined list of capabilities that are eligible for the sandbox escape bounty award, capabilities not included in that list are not eligible for bounty submissions.
