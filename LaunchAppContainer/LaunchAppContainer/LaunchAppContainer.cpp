@@ -265,10 +265,12 @@ DWORD LaunchProcess(PSID PackageSid)
     DWORD AllApplicationPackagesPolicy = PROCESS_CREATION_ALL_APPLICATION_PACKAGES_OPT_OUT;
     STARTUPINFOEX StartupInfo = { 0 };
     PROCESS_INFORMATION ProcInfo = { 0 };
+    ULONGLONG ullMitigationPolicies[2] = { 0 };
 
-    // If the process is running as LPAC account for the ALL_APPLICATION_PACKAGES_OPT_OUT attribute.
+    // If the process is running as LPAC account for the ALL_APPLICATION_PACKAGES_OPT_OUT and
+    // PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY attributes.
     if (LaunchAsLpac == true)
-        AttributeCount++;
+        AttributeCount += 2;
 
     // Allocate and initialize the thread attribute list.
     if (InitializeProcThreadAttributeList(nullptr, AttributeCount, 0, &AttributeListSize) == FALSE)
@@ -313,7 +315,8 @@ DWORD LaunchProcess(PSID PackageSid)
         goto Cleanup;
     }
 
-    // If the process is running as LPAC add the ALL_APPLICATION_PACKAGES_OPT_OUT policy attribute.
+    // If the process is running as LPAC add the ALL_APPLICATION_PACKAGES_OPT_OUT and
+    // PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY policy attributes.
     if (LaunchAsLpac == true)
     {
         if (UpdateProcThreadAttribute(AttributeList,
@@ -321,6 +324,22 @@ DWORD LaunchProcess(PSID PackageSid)
                                       PROC_THREAD_ATTRIBUTE_ALL_APPLICATION_PACKAGES_POLICY,
                                       &AllApplicationPackagesPolicy,
                                       sizeof(AllApplicationPackagesPolicy),
+                                      nullptr,
+                                      nullptr) == FALSE)
+        {
+            Result = GetLastError();
+            wprintf(L"Failed to update thread attribute list %d\r\n", Result);
+            goto Cleanup;
+        }
+
+        // Setup mitigation policies for LPAC process.
+        ullMitigationPolicies[0] |= PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON;
+
+        if (UpdateProcThreadAttribute(AttributeList,
+                                      0,
+                                      PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY,
+                                      &ullMitigationPolicies,
+                                      sizeof(ullMitigationPolicies),
                                       nullptr,
                                       nullptr) == FALSE)
         {
