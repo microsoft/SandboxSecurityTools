@@ -31,8 +31,6 @@ AppContainer and LPAC sandboxes are granted access to various system resources t
 LaunchAppContainer.exe -m 1.0.0.0_x86_en-us_TestProgram_wvx3sa3v3dj1m -c S-1-15-3-1024-2405443489-874036122-4286035555-1823921565-1746547431-2453885448-3625952902-991631256;S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681 -w -l -i cmd.exe
 ```
 
-The 'LaunchSandboxMSRC.bat' file has been included to help security researchers test submissions for the MSRC bounty program. It contains a predefined list of capabilities that are eligible for the sandbox escape bounty award, capabilities not included in that list are not eligible for bounty submissions.
-
 ### Process mitigations
 The following arguments can be used to enable process mitigations for the sandbox process:
 ```
@@ -42,4 +40,7 @@ The following arguments can be used to enable process mitigations for the sandbo
 When the win32k lockdown mitigation policy is enabled the sandbox process will not be able to make any system calls to win32k, nor to create any UI elements. For console applications the standard output pipe has been redirected to the parent process console window.
 Applications run with the win32k lockdown mitigation policy should be compiled without linking to any dlls that perform system calls to win32k, and should link the VC runtime statically instead of dynamically.
 
-To be eligible for the MSRC bounty program your submission must successfully reproduce with the win32k lockdown mitigation policy enabled.
+### MSRC bounty submission
+The 'LaunchSandboxMSRC.bat' file has been included to help security researchers test submissions for the MSRC bounty program. 
+It contains required command line options and a predefined list of capabilities that are eligible for the sandbox escape bounty award. Changes to the command line options or use of capabilities not included in the batch file are not eligible for bounty submissions. 
+MSRC bounty submissions are required to run and reproduce with the disallow win32k command line argument present (set by default in the batch file). This may require you compile your submission application using special compiler options. Please see the "Process mitigations" section for more info.
