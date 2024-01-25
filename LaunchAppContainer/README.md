@@ -16,6 +16,7 @@ Optional Arguments:
         -w : Wait for AppContainer process to exit
         -r : Retain AppContainer profile after process exit
         -l : Create process as less-privileged AppContainer (LPAC)
+        -k : Create process with the disallow win32k process mitigation enabled
 ```
 
 ### Moniker
@@ -31,3 +32,14 @@ LaunchAppContainer.exe -m 1.0.0.0_x86_en-us_TestProgram_wvx3sa3v3dj1m -c S-1-15-
 ```
 
 The 'LaunchSandboxMSRC.bat' file has been included to help security researchers test submissions for the MSRC bounty program. It contains a predefined list of capabilities that are eligible for the sandbox escape bounty award, capabilities not included in that list are not eligible for bounty submissions.
+
+### Process mitigations
+The following arguments can be used to enable process mitigations for the sandbox process:
+```
+        -k : Create process with the disallow win32k process mitigation enabled
+```
+
+When the win32k lockdown mitigation policy is enabled the sandbox process will not be able to make any system calls to win32k, nor to create any UI elements. For console applications the standard output pipe has been redirected to the parent process console window.
+Applications run with the win32k lockdown mitigation policy should be compiled without linking to any dlls that perform system calls to win32k, and should link the VC runtime statically instead of dynamically.
+
+To be eligible for the MSRC bounty program your submission must successfully reproduce with the win32k lockdown mitigation policy enabled.

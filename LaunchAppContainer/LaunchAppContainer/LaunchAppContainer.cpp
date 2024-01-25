@@ -37,6 +37,7 @@ std::vector<SidAttrWrap> CapabilityList;
 bool WaitForExit = false;
 bool RetainProfile = false;
 bool LaunchAsLpac = false;
+bool NoWin32k = false;
 
 void PrintUsage()
 {
@@ -54,6 +55,7 @@ void PrintUsage()
     wprintf(L"\t-w : Wait for AppContainer process to exit\r\n");
     wprintf(L"\t-r : Retain AppContainer profile after process exit\r\n");
     wprintf(L"\t-l : Create process as less-privileged AppContainer (LPAC)\r\n");
+    wprintf(L"\t-k : Create process with the disallow win32k process mitigation enabled\r\n");
 }
 
 
@@ -191,6 +193,11 @@ bool ParseArguments(int argc, WCHAR** argv)
             LaunchAsLpac = true;
             break;
         }
+        case 'k':
+        {
+            NoWin32k = true;
+            break;
+        }
         }
     }
 
@@ -267,10 +274,11 @@ DWORD LaunchProcess(PSID PackageSid)
     PROCESS_INFORMATION ProcInfo = { 0 };
     ULONGLONG ullMitigationPolicies[2] = { 0 };
 
-    // If the process is running as LPAC account for the ALL_APPLICATION_PACKAGES_OPT_OUT and
-    // PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY attributes.
+    // Account for additional process attributes based on command line arguments.
     if (LaunchAsLpac == true)
-        AttributeCount += 2;
+        AttributeCount++;
+    if (NoWin32k == true)
+        AttributeCount++;
 
     // Allocate and initialize the thread attribute list.
     if (InitializeProcThreadAttributeList(nullptr, AttributeCount, 0, &AttributeListSize) == FALSE)
@@ -315,8 +323,7 @@ DWORD LaunchProcess(PSID PackageSid)
         goto Cleanup;
     }
 
-    // If the process is running as LPAC add the ALL_APPLICATION_PACKAGES_OPT_OUT and
-    // PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY policy attributes.
+    // If the process is running as LPAC add the ALL_APPLICATION_PACKAGES_OPT_OUT attribute.
     if (LaunchAsLpac == true)
     {
         if (UpdateProcThreadAttribute(AttributeList,
@@ -331,7 +338,11 @@ DWORD LaunchProcess(PSID PackageSid)
             wprintf(L"Failed to update thread attribute list %d\r\n", Result);
             goto Cleanup;
         }
+    }
 
+    // If the process is running with win32k lockdown add the PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY attribute.
+    if (NoWin32k == true)
+    {
         // Setup mitigation policies for LPAC process.
         ullMitigationPolicies[0] |= PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON;
 
@@ -359,7 +370,7 @@ DWORD LaunchProcess(PSID PackageSid)
                             nullptr,
                             nullptr,
                             FALSE,
-                            EXTENDED_STARTUPINFO_PRESENT | CREATE_NEW_CONSOLE,
+                            EXTENDED_STARTUPINFO_PRESENT | (NoWin32k == false ? CREATE_NEW_CONSOLE : 0),
                             nullptr,
                             nullptr,
                             (LPSTARTUPINFOW)&StartupInfo,
