@@ -1,1 +1,1 @@
-LaunchAppContainer.exe -m 1.0.0.0_x86_en-us_TestProgram_wvx3sa3v3dj1m -c lpacAppExperience;lpacCom;lpacCryptoServices;lpacIdentityServices;lpacInstrumentation;lpacEnterprisePolicyChangeNotifications;lpacMedia;lpacPnpNotifications;registryRead;lpacServicesManagement;lpacSessionManagement;lpacPrinting;lpacWebPlatform;lpacPayments;lpacClipboard;lpacIME;lpacPackageManagerOperation;lpacDeviceAccess -w -l -k -i %*
+LaunchAppContainer.exe -m 1.0.0.0_x86_en-us_TestProgram_wvx3sa3v3dj1m -c lpacCom;registryRead -w -l -k -i %*
